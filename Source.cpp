@@ -6,8 +6,8 @@ int main()
 {
 	var a = 22;
 	var b = 3.045;
-	var c{ "Haha"};
-	var d;
+	var c{ "11s"};
+	var d = 0;
 
 	std::cout << "a =";
 	a.print();
@@ -16,7 +16,7 @@ int main()
 	std::cout << "c =";
 	c.print();
 
-	d = c + b;
+	d += c;
 	std::cout << "d =";
 	d.print();
 

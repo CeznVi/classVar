@@ -1,6 +1,5 @@
 #pragma once
 
-
 class var {
 private:
 	int i{};
@@ -16,14 +15,15 @@ private:
 		Double,
 		Char,
 	};
-
+	//Метод додавання чар
 	char* charPlus(var obj);
 	//Метод перетворення Чар в Інт
 	int charToInt();
 	//Метод перетворення Чар в Дабл
 	double charToDouble();
-	char* intToChar(int n);
-	char* doubleToChar(double n);
+	//Метод перетворення ІНТ, ДАБЛ в ЧАР
+	char* toChar(int n);
+	char* toChar(double n);
 
 public:
 	//конструктори 
@@ -42,12 +42,9 @@ public:
 	void setVar(double a);
 	void setVar(const char* a);
 
-	//Метод перевантаження (клас + клас = клас)
+	//Метод перевантаження оператора додавання(клас + клас = клас)
 	var operator+(var& obj);
-
-
-
-
+	var operator+=(var& obj);
 
 };
 
@@ -199,6 +196,15 @@ var var::operator+(var& obj)
 	else
 		return 0;
 }
+//Метод перевантаження (клас + клас = клас)
+var var::operator+=(var& obj)
+{	
+	return *this = *this + obj;
+}
+
+
+
+
 //Перетворюємо Чар то Інт
 int var::charToInt()
 {
@@ -217,31 +223,21 @@ double var::charToDouble()
 	double temp = atof(this->c);
 	return temp;
 }
-///Перетворення інта в чар (підглянув на стаковерфлоу)
-char* var::intToChar(int n)
+//Перетворееня інта в чар
+char* var::toChar(int n)
 {
-	char s[20] = { 0 };
-	char* c = s + 19;
-	unsigned int m = n;
-	int sign;
-	if (n < 0) {
-		m = -n;
-		sign = -1;
-	}
-	else if (n == 0) sign = 0;
-	else sign = 1;
-	if (m == 0) *--c = '0';
-	else
-	{
-		for (; m; m /= 10) *--c = m % 10 + '0';
-		if (sign < 0)   *--c = '-';
-	}
-	char* r = new char[s + 20 - c];
-	char* q = r;
-	while (*q++ = *c++);
-	return r;
+	char* temp = new char[20];
+	snprintf(temp, 20, "%d", n);
+	return temp;
 }
-
+//Перетворееня дабл в чар
+char* var::toChar(double n)
+{
+	char* temp = new char[20];
+	snprintf(temp, 20, "%f", n);
+	return temp;
+}
+//Методи додавання чар
 char* var::charPlus(var obj)
 {
 	if (obj.idVar == Char)
@@ -258,8 +254,7 @@ char* var::charPlus(var obj)
 	}
 	else if (obj.idVar == Int)
 	{
-
-		char* ch = intToChar(obj.i);
+		char* ch = toChar(obj.i);
 		size_t length = strlen(this->c) + strlen(ch);
 		char* temp = new char[length];
 		for (int i{}; i < strlen(this->c); i++)
@@ -272,37 +267,20 @@ char* var::charPlus(var obj)
 	}
 	else if (obj.idVar == Double)
 	{
-		return this->c;
+		char* ch = toChar(obj.d);
+		
+		size_t length = strlen(this->c) + strlen(ch);
+		char* temp = new char[length];
+		for (int i{}; i < strlen(this->c); i++)
+			temp[i] = this->c[i];
+
+		for (int i{}; i < strlen(ch) + 1; i++)
+			temp[strlen(this->c) + i] = ch[i];
+
+		return temp;
 	}
 	else
 		return 0;
 
 
 }
-
-//size_t returnStrLenght(int obj)
-//{
-//	size_t length{};
-//	char* ch = new char{ static_cast<char>(obj) };
-//	length = strlen(ch);
-//	delete[] ch;
-//	return length;
-//}
-//
-//char* var::charPlus(int obj)
-//{
-//
-//	size_t length = strlen(this->c) + returnStrLenght(obj);
-//	char* temp = new char[length];
-//
-//	for (int i{}; i < strlen(this->c); i++)
-//		temp[i] = this->c[i];
-//
-//	//for (int i{}; i < strlen(obj) + 1; i++)
-//	//	temp[strlen(this->c) + i] = obj[i];
-//
-//	return temp;
-//}
-
-
-
