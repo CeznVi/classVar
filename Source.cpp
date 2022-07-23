@@ -4,9 +4,9 @@
 
 int main()
 {
-	var a = 10;
-	var b = 3.00045;
-	var c{ "s120twl" };
+	var a = 22;
+	var b = 3.045;
+	var c{ "Haha"};
 	var d;
 
 	std::cout << "a =";
@@ -16,8 +16,8 @@ int main()
 	std::cout << "c =";
 	c.print();
 
-	d = a + c;
-	//std::cout << "d =\n";
+	d = c + b;
+	std::cout << "d =";
 	d.print();
 
 	return 0;
