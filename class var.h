@@ -17,6 +17,8 @@ private:
 	};
 	//Метод додавання чар
 	char* charPlus(var obj);
+	//Метод віднімання чар
+	char* charMinus(var obj);
 	//Метод перетворення Чар в Інт
 	int charToInt();
 	//Метод перетворення Чар в Дабл
@@ -46,6 +48,8 @@ public:
 	var operator+(var& obj);
 	var operator+=(var& obj);
 
+	var operator-(var& obj);
+	var operator-=(var& obj);
 };
 
 ///Конструктор пустишки
@@ -172,8 +176,15 @@ void var::setVar(const char* a)
 //Метод перевантаження (клас + клас = клас)
 var var::operator+(var& obj)
 {
+	//пустий перший
+	if (this->idVar == Null && obj.idVar == Int)
+		return obj.i;
+	else if (this->idVar == Null && obj.idVar == Double)
+		return obj.d;
+	else if (this->idVar == Null && obj.idVar == Char)
+		return obj.c;
 	//INT перший
-	if (this->idVar == Int && obj.idVar == Int)
+	else if (this->idVar == Int && obj.idVar == Int)
 		return this->i + obj.i;
 	else if (this->idVar == Int && obj.idVar == Double)
 		return this->i + static_cast<int>(obj.d);
@@ -201,10 +212,45 @@ var var::operator+=(var& obj)
 {	
 	return *this = *this + obj;
 }
-
-
-
-
+//Метод перевантаження (клас - клас = клас)
+var var::operator-(var& obj)
+{
+	//Var перший пустий, верне значення другого зі знаком "-", крім масивів чар
+	if (this->idVar == Null && obj.idVar == Int)
+		return -obj.i;
+	else if (this->idVar == Null && obj.idVar == Double)
+		return -obj.d;
+	else if (this->idVar == Null && obj.idVar == Char)
+		return obj.c;
+	//INT перший
+	else if (this->idVar == Int && obj.idVar == Int)
+		return this->i - obj.i;
+	else if (this->idVar == Int && obj.idVar == Double)
+		return this->i - static_cast<int>(obj.d);
+	else if (this->idVar == Int && obj.idVar == Char)
+		return this->i - obj.charToInt();	
+	//Double перший
+	else if (this->idVar == Double && obj.idVar == Double)
+		return this->d - obj.d;
+	else if (this->idVar == Double && obj.idVar == Int)
+		return this->d - static_cast<double>(obj.i);
+	else if (this->idVar == Double && obj.idVar == Char)
+		return this->d - obj.charToDouble();
+	//Сhar перший 
+	//коли різниця чар від чар (то від першого чару відкидаються схожі символи з чароб обдж)
+	else if (this->idVar == Char && obj.idVar == Char)
+		return this->charMinus(obj.c);
+	else if (this->idVar == Char && obj.idVar == Int)
+		return this->charMinus(obj.i);
+	else if (this->idVar == Char && obj.idVar == Double)
+		return this->charMinus(obj.d);
+	else
+		return 0;
+}
+var var::operator-=(var& obj)
+{
+	return *this = *this - obj;
+}
 //Перетворюємо Чар то Інт
 int var::charToInt()
 {
@@ -281,6 +327,176 @@ char* var::charPlus(var obj)
 	}
 	else
 		return 0;
+
+
+}
+//Методи віднімання чар
+char* var::charMinus(var obj)
+{
+	if (obj.idVar == Char)
+	{
+		size_t lengthThis = strlen(this->c);
+		size_t lengthobj = strlen(obj.c)+1;
+		
+		//лічильник однкових символів
+		size_t countOverlap{};
+
+		//цикл підрахування однакових символів
+		for (size_t i{}; i < lengthobj; i++)
+		{
+			for (size_t j{}; j < lengthThis; j++)
+				if (this->c[j] == obj.c[i])
+				{
+					countOverlap++;
+					i++;
+				}
+		}
+
+		char* tempCopy = new char[lengthThis];
+		char* temp = new char[lengthThis - countOverlap];
+
+		//копіювання
+		for (int i{}; i < lengthThis; i++)
+			tempCopy[i] = this->c[i];
+
+		//видалення однакових символів занулення їх
+		for (int i{}; i < lengthobj; i++)
+		{
+			for (int j{}; j < lengthThis; j++)
+			{
+				if (tempCopy[j] == obj.c[i])
+				{
+					tempCopy[j] = 0;
+					i++;
+				}
+			}
+		}
+		//копіювання з ігнором 0 символу
+		for (int i{}, j{}; i < lengthThis; i++)
+		{
+			if (tempCopy[i] != 0)
+			{
+				temp[j] = tempCopy[i];
+				j++;
+			}
+
+		}
+		delete[] tempCopy;
+		//Додавання у кінець масиву нуль термінал
+		temp[lengthThis - countOverlap] = '\0';
+
+		return temp;
+	}
+	else if (obj.idVar == Int)
+	{
+		size_t lengthThis = strlen(this->c);
+		char* ch = toChar(obj.i);
+		size_t lengthobj = strlen(ch)+1;
+
+		//лічильник однкових символів
+		size_t countOverlap{};
+
+		//цикл підрахування однакових символів
+		for (size_t i{}; i < lengthobj; i++)
+		{
+			for (size_t j{}; j < lengthThis; j++)
+				if (this->c[j] == ch[i])
+				{
+					countOverlap++;
+					i++;
+				}
+		}
+
+		char* tempCopy = new char[lengthThis];
+		char* temp = new char[lengthThis - countOverlap];
+
+		//копіювання
+		for (int i{}; i < lengthThis; i++)
+			tempCopy[i] = this->c[i];
+
+		//видалення однакових символів занулення їх
+		for (int i{}; i < lengthobj; i++)
+		{
+			for (int j{}; j < lengthThis; j++)
+			{
+				if (tempCopy[j] == ch[i])
+				{
+					tempCopy[j] = 0;
+					i++;
+				}
+			}
+		}
+		//копіювання з ігнором 0 символу
+		for (int i{}, j{}; i < lengthThis; i++)
+		{
+			if (tempCopy[i] != 0)
+			{
+				temp[j] = tempCopy[i];
+				j++;
+			}
+
+		}
+		delete[] tempCopy;
+		//Додавання у кінець масиву нуль термінал
+		temp[lengthThis - countOverlap] = '\0';
+
+		return temp;
+	}
+	else if (obj.idVar == Double)
+	{
+	size_t lengthThis = strlen(this->c);
+	char* ch = toChar(obj.d);
+	size_t lengthobj = strlen(ch) + 1;
+
+	//лічильник однкових символів
+	size_t countOverlap{};
+
+	//цикл підрахування однакових символів
+	for (size_t i{}; i < lengthobj; i++)
+	{
+		for (size_t j{}; j < lengthThis; j++)
+			if (this->c[j] == ch[i])
+			{
+				countOverlap++;
+				i++;
+			}
+	}
+
+	char* tempCopy = new char[lengthThis];
+	char* temp = new char[lengthThis - countOverlap];
+
+	//копіювання
+	for (int i{}; i < lengthThis; i++)
+		tempCopy[i] = this->c[i];
+
+	//видалення однакових символів занулення їх
+	for (int i{}; i < lengthobj; i++)
+	{
+		for (int j{}; j < lengthThis; j++)
+		{
+			if (tempCopy[j] == ch[i])
+			{
+				tempCopy[j] = 0;
+				i++;
+			}
+		}
+	}
+	//копіювання з ігнором 0 символу
+	for (int i{}, j{}; i < lengthThis; i++)
+	{
+		if (tempCopy[i] != 0)
+		{
+			temp[j] = tempCopy[i];
+			j++;
+		}
+
+	}
+	delete[] tempCopy;
+	//Додавання у кінець масиву нуль термінал
+	temp[lengthThis - countOverlap] = '\0';
+
+	return temp;
+	}
 
 
 }

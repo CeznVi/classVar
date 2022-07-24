@@ -1,13 +1,17 @@
 #include <iostream>
 #include <stdlib.h>
+#include <Windows.h>
 #include "class var.h"
 
 int main()
 {
-	var a = 22;
+	SetConsoleCP(1251);
+	SetConsoleOutputCP(1251);
+
+	var a = "3.045 Віктор "; 
 	var b = 3.045;
-	var c{ "11s"};
-	var d = 0;
+	var c = 3.045;
+	var d;
 
 	std::cout << "a =";
 	a.print();
@@ -16,8 +20,8 @@ int main()
 	std::cout << "c =";
 	c.print();
 
-	d += c;
-	std::cout << "d =";
+	d = a - c;
+	std::cout << "c =";
 	d.print();
 
 	return 0;
