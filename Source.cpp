@@ -8,7 +8,7 @@ int main()
 	SetConsoleCP(1251);
 	SetConsoleOutputCP(1251);
 
-	var a = "Microsoft";
+	var a = "Microsoft1q";
 	var b = "Windows";
 	var c = 3.045;
 	var d;
