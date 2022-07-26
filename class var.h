@@ -19,6 +19,10 @@ private:
 	char* charPlus(var obj);
 	//Метод віднімання чар
 	char* charMinus(var obj);
+	//Метод * чар
+	char* charMult(var obj);
+	//Метод / чар
+	char* charDiv(var obj);
 	//Метод перетворення Чар в Інт
 	int charToInt();
 	//Метод перетворення Чар в Дабл
@@ -44,12 +48,15 @@ public:
 	void setVar(double a);
 	void setVar(const char* a);
 
-	//Метод перевантаження оператора додавання(клас + клас = клас)
+	//Метод перевантаження операторів
 	var operator+(var& obj);
 	var operator+=(var& obj);
-
 	var operator-(var& obj);
 	var operator-=(var& obj);
+	var operator*(var& obj);
+	var operator*=(var& obj);
+	var operator/(var& obj);
+
 };
 
 ///Конструктор пустишки
@@ -122,14 +129,17 @@ var::~var()
 	switch (idVar)
 	{
 	case WhatIsIt::Int:
+		idVar = Null;
 		i = 0;
 		break;
 	case WhatIsIt::Double:
+		idVar = Null;
 		d = 0;
 		break;
 	case WhatIsIt::Char:
 		delete c;
 		c = nullptr;
+		idVar = Null;
 		break;
 	default:
 		break;
@@ -168,12 +178,13 @@ void var::setVar(double a)
 //Чаровий сетер
 void var::setVar(const char* a)
 {
+	idVar = WhatIsIt::Char;
 	delete c;
 	c = new char[strlen(a) + 1];
 	strcpy_s(c, strlen(a) + 1, a);
-	idVar = WhatIsIt::Char;
+
 }
-//Метод перевантаження (клас + клас = клас)
+//Метод перевантаження операторів
 var var::operator+(var& obj)
 {
 	//пустий перший
@@ -207,12 +218,10 @@ var var::operator+(var& obj)
 	else
 		return 0;
 }
-//Метод перевантаження (клас + клас = клас)
 var var::operator+=(var& obj)
 {	
 	return *this = *this + obj;
 }
-//Метод перевантаження (клас - клас = клас)
 var var::operator-(var& obj)
 {
 	//Var перший пустий, верне значення другого зі знаком "-", крім масивів чар
@@ -251,6 +260,80 @@ var var::operator-=(var& obj)
 {
 	return *this = *this - obj;
 }
+
+var var::operator*(var& obj)
+{
+	//пустий перший
+	if (this->idVar == Null && obj.idVar == Int)
+		return 0;
+	else if (this->idVar == Null && obj.idVar == Double)
+		return 0;
+	else if (this->idVar == Null && obj.idVar == Char)
+		return 0;
+	//INT перший
+	else if (this->idVar == Int && obj.idVar == Int)
+		return this->i * obj.i;
+	else if (this->idVar == Int && obj.idVar == Double)
+		return this->i * static_cast<int>(obj.d);
+	else if (this->idVar == Int && obj.idVar == Char)
+		return this->i * obj.charToInt();
+	////Double перший
+	else if (this->idVar == Double && obj.idVar == Double)
+		return this->d * obj.d;
+	else if (this->idVar == Double && obj.idVar == Int)
+		return this->d * static_cast<double>(obj.i);
+	else if (this->idVar == Double && obj.idVar == Char)
+		return this->d * obj.charToDouble();
+	////Сhar перший
+	else if (this->idVar == Char && obj.idVar == Char)
+		return this->charMult(obj.c);
+	else if (this->idVar == Char && obj.idVar == Int)
+		return this->charMult(obj.i);
+	else if (this->idVar == Char && obj.idVar == Double)
+		return this->charMult(obj.d);
+	else
+		return 0;
+}
+var var::operator*=(var& obj)
+{
+	return *this = *this * obj;
+}
+var var::operator/(var& obj)
+{
+	//пустий перший
+	if (this->idVar == Null && obj.idVar == Int)
+		return 0;
+	else if (this->idVar == Null && obj.idVar == Double)
+		return 0;
+	else if (this->idVar == Null && obj.idVar == Char)
+		return 0;
+	//INT перший
+	else if (this->idVar == Int && obj.idVar == Int)
+		return this->i / obj.i;
+	else if (this->idVar == Int && obj.idVar == Double)
+		return this->i / static_cast<int>(obj.d);
+	else if (this->idVar == Int && obj.idVar == Char)
+		return this->i / obj.charToInt();
+	////Double перший
+	else if (this->idVar == Double && obj.idVar == Double)
+		return this->d / obj.d;
+	else if (this->idVar == Double && obj.idVar == Int)
+		return this->d / static_cast<double>(obj.i);
+	else if (this->idVar == Double && obj.idVar == Char)
+		return this->d / obj.charToDouble();
+	////Сhar перший
+	else if (this->idVar == Char && obj.idVar == Char)
+		return this->charDiv(obj.c);
+	//else if (this->idVar == Char && obj.idVar == Int)
+	//	return this->charMult(obj.i);
+	//else if (this->idVar == Char && obj.idVar == Double)
+	//	return this->charMult(obj.d);
+	else
+		return 0;
+}
+
+
+
 //Перетворюємо Чар то Інт
 int var::charToInt()
 {
@@ -497,6 +580,250 @@ char* var::charMinus(var obj)
 
 	return temp;
 	}
+	else 
+		return 0;
+
+}
+
+//Методи множення чар
+char* var::charMult(var obj)
+{
+	if (obj.idVar == Char)
+	{
+		//змінна розміру масиву однакових символів
+		int sizeCount{};
+		///Підрахунок однакових символів між двома масивами символів
+		for (int i{}; i < strlen(this->c); i++)
+		{
+			for (int j{}; j < strlen(obj.c); j++)
+			{
+				if (this->c[i] == obj.c[j])
+				{
+					sizeCount++;
+				}
+			}
+		}
+
+		char* copythis = new char[sizeCount];
+
+		for (int i{}; i < sizeCount;)
+		{
+			for (int j{}; j < strlen(this->c); j++)
+			{
+				for (int k{}; k < strlen(obj.c); k++)
+				{
+					if (this->c[j] == obj.c[k])
+					{
+						copythis[i] = this->c[j];
+						i++;
+					}
+				}
+			}
+		}
+		//Додавання у кінець масиву нуль термінал
+		copythis[sizeCount] = '\0';
+		return copythis;
+	}
+	else if (obj.idVar == Int)
+	{
+		char* ch = toChar(obj.i);
+		//змінна розміру масиву однакових символів
+		int sizeCount{};
+		///Підрахунок однакових символів між двома масивами символів
+		for (int i{}; i < strlen(this->c); i++)
+		{
+			for (int j{}; j < strlen(ch); j++)
+			{
+				if (this->c[i] == ch[j])
+				{
+					sizeCount++;
+				}
+			}
+		}
+
+		char* copythis = new char[sizeCount];
+
+		for (int i{}; i < sizeCount;)
+		{
+			for (int j{}; j < strlen(this->c); j++)
+			{
+				for (int k{}; k < strlen(ch); k++)
+				{
+					if (this->c[j] == ch[k])
+					{
+						copythis[i] = this->c[j];
+						i++;
+					}
+				}
+			}
+		}
+		//Додавання у кінець масиву нуль термінал
+		copythis[sizeCount] = '\0';
+		delete[] ch;
+		return copythis;
 
 
+	}
+	else if (obj.idVar == Double)
+	{
+		char* ch = toChar(obj.d);
+		//змінна розміру масиву однакових символів
+		int sizeCount{};
+		///Підрахунок однакових символів між двома масивами символів
+		for (int i{}; i < strlen(this->c); i++)
+		{
+			for (int j{}; j < strlen(ch); j++)
+			{
+				if (this->c[i] == ch[j])
+				{
+					sizeCount++;
+				}
+			}
+		}
+
+		char* copythis = new char[sizeCount];
+
+		for (int i{}; i < sizeCount;)
+		{
+			for (int j{}; j < strlen(this->c); j++)
+			{
+				for (int k{}; k < strlen(ch); k++)
+				{
+					if (this->c[j] == ch[k])
+					{
+						copythis[i] = this->c[j];
+						i++;
+					}
+				}
+			}
+		}
+		//Додавання у кінець масиву нуль термінал
+		copythis[sizeCount] = '\0';
+		delete[] ch;
+		return copythis;
+
+
+	}
+}
+
+
+//Методи / чар
+char* var::charDiv(var obj)
+{
+	if (obj.idVar == Char)
+	{
+		//змінна розміру масиву однакових символів
+		int sizeCount{};
+		///Підрахунок однакових символів між двома масивами символів
+		for (int i{}; i < strlen(this->c); i++)
+		{
+			for (int j{}; j < strlen(obj.c); j++)
+			{
+				if (this->c[i] != obj.c[j])
+				{
+					sizeCount++;
+				}
+			}
+		}
+
+		char* copythis = new char[sizeCount];
+
+		for (int i{}; i < sizeCount;)
+		{
+			for (int j{}; j < strlen(this->c); j++)
+			{
+				for (int k{}; k < strlen(obj.c); k++)
+				{
+					if (this->c[j] != obj.c[k])
+					{
+						copythis[i] = this->c[j];
+						i++;
+					}
+				}
+			}
+		}
+		//Додавання у кінець масиву нуль термінал
+		copythis[sizeCount] = '\0';
+		return copythis;
+	}
+	else if (obj.idVar == Int)
+	{
+		char* ch = toChar(obj.i);
+		//змінна розміру масиву однакових символів
+		int sizeCount{};
+		///Підрахунок однакових символів між двома масивами символів
+		for (int i{}; i < strlen(this->c); i++)
+		{
+			for (int j{}; j < strlen(ch); j++)
+			{
+				if (this->c[i] == ch[j])
+				{
+					sizeCount++;
+				}
+			}
+		}
+
+		char* copythis = new char[sizeCount];
+
+		for (int i{}; i < sizeCount;)
+		{
+			for (int j{}; j < strlen(this->c); j++)
+			{
+				for (int k{}; k < strlen(ch); k++)
+				{
+					if (this->c[j] == ch[k])
+					{
+						copythis[i] = this->c[j];
+						i++;
+					}
+				}
+			}
+		}
+		//Додавання у кінець масиву нуль термінал
+		copythis[sizeCount] = '\0';
+		delete[] ch;
+		return copythis;
+
+
+	}
+	else if (obj.idVar == Double)
+	{
+		char* ch = toChar(obj.d);
+		//змінна розміру масиву однакових символів
+		int sizeCount{};
+		///Підрахунок однакових символів між двома масивами символів
+		for (int i{}; i < strlen(this->c); i++)
+		{
+			for (int j{}; j < strlen(ch); j++)
+			{
+				if (this->c[i] == ch[j])
+				{
+					sizeCount++;
+				}
+			}
+		}
+
+		char* copythis = new char[sizeCount];
+
+		for (int i{}; i < sizeCount;)
+		{
+			for (int j{}; j < strlen(this->c); j++)
+			{
+				for (int k{}; k < strlen(ch); k++)
+				{
+					if (this->c[j] == ch[k])
+					{
+						copythis[i] = this->c[j];
+						i++;
+					}
+				}
+			}
+		}
+		//Додавання у кінець масиву нуль термінал
+		copythis[sizeCount] = '\0';
+		delete[] ch;
+		return copythis;
+
+
+	}
 }

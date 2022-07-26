@@ -8,8 +8,8 @@ int main()
 	SetConsoleCP(1251);
 	SetConsoleOutputCP(1251);
 
-	var a = "3.045 Віктор "; 
-	var b = 3.045;
+	var a = "Microsoft";
+	var b = "Windows";
 	var c = 3.045;
 	var d;
 
@@ -20,8 +20,8 @@ int main()
 	std::cout << "c =";
 	c.print();
 
-	d = a - c;
-	std::cout << "c =";
+	d = a / b;
+	std::cout << "d =";
 	d.print();
 
 	return 0;
