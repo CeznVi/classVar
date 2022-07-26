@@ -56,7 +56,7 @@ public:
 	var operator*(var& obj);
 	var operator*=(var& obj);
 	var operator/(var& obj);
-
+	var operator/=(var& obj);
 };
 
 ///Конструктор пустишки
@@ -324,14 +324,17 @@ var var::operator/(var& obj)
 	////Сhar перший
 	else if (this->idVar == Char && obj.idVar == Char)
 		return this->charDiv(obj.c);
-	//else if (this->idVar == Char && obj.idVar == Int)
-	//	return this->charMult(obj.i);
-	//else if (this->idVar == Char && obj.idVar == Double)
-	//	return this->charMult(obj.d);
+	else if (this->idVar == Char && obj.idVar == Int)
+		return this->charDiv(obj.i);
+	else if (this->idVar == Char && obj.idVar == Double)
+		return this->charDiv(obj.d);
 	else
 		return 0;
 }
-
+var var::operator/=(var& obj)
+{
+	return *this = *this / obj;
+}
 
 
 //Перетворюємо Чар то Інт
@@ -584,7 +587,6 @@ char* var::charMinus(var obj)
 		return 0;
 
 }
-
 //Методи множення чар
 char* var::charMult(var obj)
 {
@@ -707,7 +709,6 @@ char* var::charMult(var obj)
 	else
 	return 0;
 }
-
 //Методи / чар
 char* var::charDiv(var obj)
 {
@@ -762,89 +763,122 @@ char* var::charDiv(var obj)
 			}
 		}
 
-
 		//Додавання у кінець масиву нуль термінал
 		copythis[sizeCount] = '\0';
 		return copythis;
 	}
 	else if (obj.idVar == Int)
 	{
-		char* ch = toChar(obj.i);
 		//змінна розміру масиву однакових символів
 		int sizeCount{};
-		///Підрахунок однакових символів між двома масивами символів
+		char* ch = toChar(obj.i);
+		///Підрахунок різних символів між двома масивами символів
 		for (int i{}; i < strlen(this->c); i++)
 		{
-			for (int j{}; j < strlen(ch); j++)
+			for (int j{}, k{}; j < strlen(ch); j++)
 			{
-				if (this->c[i] == ch[j])
+				if (this->c[i] != ch[j])
+				{
+					k++;
+				}
+
+				if (k == strlen(ch))
 				{
 					sizeCount++;
+					k = 0;
 				}
 			}
 		}
 
+		//std::cout << sizeCount << " this is sizeCount\n";
+
 		char* copythis = new char[sizeCount];
 
-		for (int i{}; i < sizeCount;)
+		//копіювання символів з 1 масиву які не схожі з масивом 2 
+		for (int i{}; i < sizeCount; i++)
 		{
-			for (int j{}; j < strlen(this->c); j++)
+			for (int j{}, l{}; j < strlen(this->c); j++, l = 0)
 			{
 				for (int k{}; k < strlen(ch); k++)
 				{
-					if (this->c[j] == ch[k])
+					if (this->c[j] != ch[k])
+					{
+						l++;
+					}
+
+
+					if (l == strlen(ch))
 					{
 						copythis[i] = this->c[j];
+						l = 0;
 						i++;
+
 					}
 				}
 			}
 		}
+
 		//Додавання у кінець масиву нуль термінал
 		copythis[sizeCount] = '\0';
 		delete[] ch;
 		return copythis;
-
-
 	}
 	else if (obj.idVar == Double)
 	{
-		char* ch = toChar(obj.d);
-		//змінна розміру масиву однакових символів
-		int sizeCount{};
-		///Підрахунок однакових символів між двома масивами символів
-		for (int i{}; i < strlen(this->c); i++)
+	//змінна розміру масиву однакових символів
+	int sizeCount{};
+	char* ch = toChar(obj.d);
+	///Підрахунок різних символів між двома масивами символів
+	for (int i{}; i < strlen(this->c); i++)
+	{
+		for (int j{}, k{}; j < strlen(ch); j++)
 		{
-			for (int j{}; j < strlen(ch); j++)
+			if (this->c[i] != ch[j])
 			{
-				if (this->c[i] == ch[j])
-				{
-					sizeCount++;
-				}
+				k++;
+			}
+
+			if (k == strlen(ch))
+			{
+				sizeCount++;
+				k = 0;
 			}
 		}
-
-		char* copythis = new char[sizeCount];
-
-		for (int i{}; i < sizeCount;)
-		{
-			for (int j{}; j < strlen(this->c); j++)
-			{
-				for (int k{}; k < strlen(ch); k++)
-				{
-					if (this->c[j] == ch[k])
-					{
-						copythis[i] = this->c[j];
-						i++;
-					}
-				}
-			}
-		}
-		//Додавання у кінець масиву нуль термінал
-		copythis[sizeCount] = '\0';
-		delete[] ch;
-		return copythis;
-
-
 	}
+
+	//std::cout << sizeCount << " this is sizeCount\n";
+
+	char* copythis = new char[sizeCount];
+
+	//копіювання символів з 1 масиву які не схожі з масивом 2 
+	for (int i{}; i < sizeCount; i++)
+	{
+		for (int j{}, l{}; j < strlen(this->c); j++, l = 0)
+		{
+			for (int k{}; k < strlen(ch); k++)
+			{
+				if (this->c[j] != ch[k])
+				{
+					l++;
+				}
+
+
+				if (l == strlen(ch))
+				{
+					copythis[i] = this->c[j];
+					l = 0;
+					i++;
+
+				}
+			}
+		}
+	}
+
+	//Додавання у кінець масиву нуль термінал
+	copythis[sizeCount] = '\0';
+	delete[] ch;
+	return copythis;
+	}
+	else 
+	return 0;
 }
