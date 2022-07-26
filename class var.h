@@ -354,21 +354,21 @@ bool var::operator<(var& obj)
 	else if (this->idVar == Int && obj.idVar == Char)
 		return this->i < obj.charToInt();
 	//////Double ןונרטי
-	//else if (this->idVar == Double && obj.idVar == Double)
-	//	return this->d / obj.d;
-	//else if (this->idVar == Double && obj.idVar == Int)
-	//	return this->d / static_cast<double>(obj.i);
-	//else if (this->idVar == Double && obj.idVar == Char)
-	//	return this->d / obj.charToDouble();
+	else if (this->idVar == Double && obj.idVar == Double)
+		return this->d < obj.d;
+	else if (this->idVar == Double && obj.idVar == Int)
+		return this->d < static_cast<double>(obj.i);
+	else if (this->idVar == Double && obj.idVar == Char)
+		return this->d < obj.charToDouble();
 	//////Ñhar ןונרטי
-	//else if (this->idVar == Char && obj.idVar == Char)
-	//	return this->charDiv(obj.c);
+	else if (this->idVar == Char && obj.idVar == Char)
+		return this->c < obj.c;
 	//else if (this->idVar == Char && obj.idVar == Int)
 	//	return this->charDiv(obj.i);
 	//else if (this->idVar == Char && obj.idVar == Double)
 	//	return this->charDiv(obj.d);
-	//else
-	//	return 0;
+	else
+		return 0;
 }
 
 //Ïונועגמנ‏÷למ ×אנ עמ ²םע
