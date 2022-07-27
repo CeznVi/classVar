@@ -49,6 +49,12 @@ public:
 	void setVar(const char* a);
 
 	//Метод перевантаження операторів
+	bool operator<(var& obj);
+	bool operator<=(var& obj);
+	bool operator>(var& obj);
+	bool operator>=(var& obj);
+	bool operator==(var& obj);
+	bool operator!=(var& obj);
 	var operator+(var& obj);
 	var operator+=(var& obj);
 	var operator-(var& obj);
@@ -57,7 +63,6 @@ public:
 	var operator*=(var& obj);
 	var operator/(var& obj);
 	var operator/=(var& obj);
-	bool operator<(var& obj);
 
 };
 
@@ -262,7 +267,6 @@ var var::operator-=(var& obj)
 {
 	return *this = *this - obj;
 }
-
 var var::operator*(var& obj)
 {
 	//пустий перший
@@ -362,11 +366,176 @@ bool var::operator<(var& obj)
 		return this->d < obj.charToDouble();
 	//////Сhar перший
 	else if (this->idVar == Char && obj.idVar == Char)
-		return this->c < obj.c;
-	//else if (this->idVar == Char && obj.idVar == Int)
-	//	return this->charDiv(obj.i);
-	//else if (this->idVar == Char && obj.idVar == Double)
-	//	return this->charDiv(obj.d);
+		return this->charToInt() < obj.charToInt();
+	else if (this->idVar == Char && obj.idVar == Int)
+		return this->charToInt() < obj.i;
+	else if (this->idVar == Char && obj.idVar == Double)
+		return this->charToInt() < static_cast<int>(obj.d);
+	else
+		return 0;
+}
+bool var::operator<=(var& obj)
+{
+	//пустий перший
+	if (this->idVar == Null && obj.idVar == Int)
+		return true;
+	else if (this->idVar == Null && obj.idVar == Double)
+		return true;
+	else if (this->idVar == Null && obj.idVar == Char)
+		return true;
+	////INT перший
+	else if (this->idVar == Int && obj.idVar == Int)
+		return this->i <= obj.i;
+	else if (this->idVar == Int && obj.idVar == Double)
+		return this->i <= static_cast<int>(obj.d);
+	else if (this->idVar == Int && obj.idVar == Char)
+		return this->i <= obj.charToInt();
+	//////Double перший
+	else if (this->idVar == Double && obj.idVar == Double)
+		return this->d <= obj.d;
+	else if (this->idVar == Double && obj.idVar == Int)
+		return this->d <= static_cast<double>(obj.i);
+	else if (this->idVar == Double && obj.idVar == Char)
+		return this->d <= obj.charToDouble();
+	//////Сhar перший
+	else if (this->idVar == Char && obj.idVar == Char)
+		return this->charToInt() <= obj.charToInt();
+	else if (this->idVar == Char && obj.idVar == Int)
+		return this->charToInt() <= obj.i;
+	else if (this->idVar == Char && obj.idVar == Double)
+		return this->charToInt() <= static_cast<int>(obj.d);
+	else
+		return 0;
+}
+bool var::operator>(var& obj)
+{
+	//пустий перший
+	if (this->idVar == Null && obj.idVar == Int)
+		return false;
+	else if (this->idVar == Null && obj.idVar == Double)
+		return false;
+	else if (this->idVar == Null && obj.idVar == Char)
+		return false;
+	////INT перший
+	else if (this->idVar == Int && obj.idVar == Int)
+		return this->i > obj.i;
+	else if (this->idVar == Int && obj.idVar == Double)
+		return this->i > static_cast<int>(obj.d);
+	else if (this->idVar == Int && obj.idVar == Char)
+		return this->i > obj.charToInt();
+	//////Double перший
+	else if (this->idVar == Double && obj.idVar == Double)
+		return this->d > obj.d;
+	else if (this->idVar == Double && obj.idVar == Int)
+		return this->d > static_cast<double>(obj.i);
+	else if (this->idVar == Double && obj.idVar == Char)
+		return this->d > obj.charToDouble();
+	//////Сhar перший
+	else if (this->idVar == Char && obj.idVar == Char)
+		return this->charToInt() > obj.charToInt();
+	else if (this->idVar == Char && obj.idVar == Int)
+		return this->charToInt() > obj.i;
+	else if (this->idVar == Char && obj.idVar == Double)
+		return this->charToInt() > static_cast<int>(obj.d);
+	else
+		return 0;
+}
+bool var::operator>=(var& obj)
+{
+	//пустий перший
+	if (this->idVar == Null && obj.idVar == Int)
+		return false;
+	else if (this->idVar == Null && obj.idVar == Double)
+		return false;
+	else if (this->idVar == Null && obj.idVar == Char)
+		return false;
+	////INT перший
+	else if (this->idVar == Int && obj.idVar == Int)
+		return this->i >= obj.i;
+	else if (this->idVar == Int && obj.idVar == Double)
+		return this->i >= static_cast<int>(obj.d);
+	else if (this->idVar == Int && obj.idVar == Char)
+		return this->i >= obj.charToInt();
+	//////Double перший
+	else if (this->idVar == Double && obj.idVar == Double)
+		return this->d >= obj.d;
+	else if (this->idVar == Double && obj.idVar == Int)
+		return this->d >= static_cast<double>(obj.i);
+	else if (this->idVar == Double && obj.idVar == Char)
+		return this->d >= obj.charToDouble();
+	//////Сhar перший
+	else if (this->idVar == Char && obj.idVar == Char)
+		return this->charToInt() >= obj.charToInt();
+	else if (this->idVar == Char && obj.idVar == Int)
+		return this->charToInt() >= obj.i;
+	else if (this->idVar == Char && obj.idVar == Double)
+		return this->charToInt() >= static_cast<int>(obj.d);
+	else
+		return 0;
+}
+bool var::operator==(var& obj)
+{
+	//пустий перший
+	if (this->idVar == Null && obj.idVar == Int)
+		return false;
+	else if (this->idVar == Null && obj.idVar == Double)
+		return false;
+	else if (this->idVar == Null && obj.idVar == Char)
+		return false;
+	////INT перший
+	else if (this->idVar == Int && obj.idVar == Int)
+		return this->i == obj.i;
+	else if (this->idVar == Int && obj.idVar == Double)
+		return this->i == static_cast<int>(obj.d);
+	else if (this->idVar == Int && obj.idVar == Char)
+		return this->i == obj.charToInt();
+	//////Double перший
+	else if (this->idVar == Double && obj.idVar == Double)
+		return this->d == obj.d;
+	else if (this->idVar == Double && obj.idVar == Int)
+		return this->d == static_cast<double>(obj.i);
+	else if (this->idVar == Double && obj.idVar == Char)
+		return this->d == obj.charToDouble();
+	//////Сhar перший
+	else if (this->idVar == Char && obj.idVar == Char)
+		return this->charToInt() == obj.charToInt();
+	else if (this->idVar == Char && obj.idVar == Int)
+		return this->charToInt() == obj.i;
+	else if (this->idVar == Char && obj.idVar == Double)
+		return this->charToInt() == static_cast<int>(obj.d);
+	else
+		return 0;
+}
+bool var::operator!=(var& obj)
+{
+	//пустий перший
+	if (this->idVar == Null && obj.idVar == Int)
+		return true;
+	else if (this->idVar == Null && obj.idVar == Double)
+		return true;
+	else if (this->idVar == Null && obj.idVar == Char)
+		return true;
+	////INT перший
+	else if (this->idVar == Int && obj.idVar == Int)
+		return this->i != obj.i;
+	else if (this->idVar == Int && obj.idVar == Double)
+		return this->i != static_cast<int>(obj.d);
+	else if (this->idVar == Int && obj.idVar == Char)
+		return this->i != obj.charToInt();
+	//////Double перший
+	else if (this->idVar == Double && obj.idVar == Double)
+		return this->d != obj.d;
+	else if (this->idVar == Double && obj.idVar == Int)
+		return this->d != static_cast<double>(obj.i);
+	else if (this->idVar == Double && obj.idVar == Char)
+		return this->d != obj.charToDouble();
+	//////Сhar перший
+	else if (this->idVar == Char && obj.idVar == Char)
+		return this->charToInt() != obj.charToInt();
+	else if (this->idVar == Char && obj.idVar == Int)
+		return this->charToInt() != obj.i;
+	else if (this->idVar == Char && obj.idVar == Double)
+		return this->charToInt() != static_cast<int>(obj.d);
 	else
 		return 0;
 }

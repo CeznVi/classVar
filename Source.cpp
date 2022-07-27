@@ -8,8 +8,8 @@ int main()
 	SetConsoleCP(1251);
 	SetConsoleOutputCP(1251);
 
-	var a = "lox";
-	var b = "3";
+	var a = 2;
+	var b = 2;
 	var c = 3.045;
 	var d;
 
@@ -23,8 +23,8 @@ int main()
 	//d = a / c;
 	std::cout << "d =";
 	d.print();
-	if(a < b)
-		std::cout << "a <b";
+	if(a == b)
+		std::cout << "a ==b";
 	else 
 		std::cout << "FALSE   a <b";
 	return 0;
